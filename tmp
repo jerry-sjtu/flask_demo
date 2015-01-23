@@ -1,0 +1,10 @@
+399217	500004	菜	精致	口味	口味	精致	positive
+1268190	500004	口味	清淡	口味	口味	NULL	positive
+371286	500004	椅子	脏	环境	环境	NULL	negative
+504504	500004	菜色	甜	口味	口味	甜	positive
+371286	500004	记忆	脏	NULL	NULL	NULL	negative
+418921	500004	味道	一般	口味	口味	NULL	negative
+399217	500004	味道	一般	口味	口味	NULL	negative
+1268190	500004	味	佳	口味	口味	NULL	positive
+369172	500004	味	佳	口味	口味	NULL	positive
+1268190	500004	环境	棒	环境	环境	NULL	positive

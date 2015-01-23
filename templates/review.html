@@ -22,7 +22,11 @@
                 <th>ReviewId</th>
                 <th>ReviewTime</th>
                 <th>Review</th>
-                <th>Tag</th>
+                <th>Noun</th>
+                <th>Adj</th>
+                <th>NounTag1</th>
+                <th>NounTag2</th>
+                <th>AdjTag</th>
                 <th>Sentiment</th>
               </tr>
             </thead>
@@ -32,8 +36,12 @@
                 <td>{{ item[0] }}</td>
                 <td>{{ item[1] }}</td>
                 <td>{{ item[2] }}</td>
-                <td><h4><span class="label label-primary">Default</span></h4></td>
-                <td>@mdo</td>
+                <td>{{ item[3] }}</td>
+                <td>{{ item[4] }}</td>
+                <td><h4><span class="label label-primary">{{ item[5] }}</span></h4></td>
+                <td><h4><span class="label label-primary">{{ item[6] }}</span></h4></td>
+                <td><h4><span class="label label-primary">{{ item[7] }}</span></h4></td>
+                <td><h4><span class="label label-primary">{{ item[8] }}</span></h4></td>
               </tr>
               {% endfor %}
             </tbody>
