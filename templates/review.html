@@ -1,0 +1,44 @@
+<!doctype html>
+<head>
+<title>点评摘要</title>
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> 
+</head>
+
+<body>
+<div class="container">
+    <div class="jumbotron col-md-10">
+        <p>{{ val.shopname }}的点评</p>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ReviewId</th>
+                <th>ReviewTime</th>
+                <th>Review</th>
+                <th>Tag</th>
+                <th>Sentiment</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in val.review %}
+              <tr>
+                <td>{{ item[0] }}</td>
+                <td>{{ item[1] }}</td>
+                <td>{{ item[2] }}</td>
+                <td><h4><span class="label label-primary">Default</span></h4></td>
+                <td>@mdo</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
