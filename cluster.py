@@ -10,6 +10,8 @@ def init_cluster(path):
         if len(line.split('\t')) != 8:
             continue
         review_id, shop_id, noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment = line.strip().split()
+        if noun_cat1 == 'NULL':
+            continue
         if int(review_id) <= min_id:
             continue
         cluster_df[review_id] = (noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment)

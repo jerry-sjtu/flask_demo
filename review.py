@@ -10,7 +10,7 @@ import cluster
 
 app = Flask(__name__)
 BASE_URL = 'http://www.dianping.com/shop/%s/review_all'
-CLUSTER_PATH = 'tmp'
+CLUSTER_PATH = 'data/review_summary_sh.csv'
 print 'start to load cluster information'
 cluster_dict = cluster.init_cluster(CLUSTER_PATH)
 print 'end to load cluster information'
