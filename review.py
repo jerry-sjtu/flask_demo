@@ -10,8 +10,6 @@ import cluster
 
 app = Flask(__name__)
 BASE_URL = 'http://www.dianping.com/shop/%s/review_all'
-cookie = cookielib.CookieJar()
-opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie))
 CLUSTER_PATH = 'tmp'
 print 'start to load cluster information'
 cluster_dict = cluster.init_cluster(CLUSTER_PATH)
@@ -32,9 +30,6 @@ def view_by_shop(shopid):
     r_dict1['review'] += r_dict2['review'] 
     return render_template('review.html', val=r_dict1)
 
-@app.route("/sale/")
-def hot_view():
-    return render_template('doc/BMaptest.html', val=dict())
 
 def pare_review_info(shopid, pageno):
     url = BASE_URL % shopid
