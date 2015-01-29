@@ -52,6 +52,7 @@ def pare_review_info(shopid, pageno):
         f = gzip.GzipFile(fileobj=buf)
         soup = BeautifulSoup(f.read())
         r_dict['review'] = review_list
+        r_dict['pno_list'] = list()
         for a in soup.find_all('div', class_='revitew-title') :
             r_dict['shopname'] = soup.h1.a.string
         for comment_list_div in soup.find_all('div', class_='comment-list'):
@@ -72,6 +73,8 @@ def pare_review_info(shopid, pageno):
                     review_list.append((review_id, time, review_content, noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment))
                 else:
                     review_list.append((review_id, time, review_content, 'NULL', 'NULL', 'NULL', 'NULL', 'NULL', 'NULL'))
+        for a in soup.find_all('a', class_="PageLink"):
+            r_dict['pno_list'].append(a.attrs['data-pg'])
     return r_dict
 
 if __name__ == "__main__":

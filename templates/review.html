@@ -66,5 +66,20 @@
             </table>
         </div>
     </div>
+
+
+    <div><nav>
+      <ul class="pagination">
+        {% for item in val.pno_list %}
+            {% if item == '1' %}
+                    <li><a href="#"> {{ item }} ... </a></li>
+            {% endif %}
+            {% if item != '1' %}
+                <li><a href="#">{{ item }}</a></li>
+            {% endif %}
+        {% endfor %}
+      </ul>
+    </nav></div>
+
 </div>
 </body>
