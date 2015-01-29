@@ -72,10 +72,10 @@
       <ul class="pagination">
         {% for item in val.pno_list %}
             {% if item == '1' %}
-                    <li><a href="#"> {{ item }} ... </a></li>
+                    <li><a href="/{{ val.shopid }}/{{ item }}"> {{ item }} ... </a></li>
             {% endif %}
             {% if item != '1' %}
-                <li><a href="#">{{ item }}</a></li>
+                <li><a href="/{{ val.shopid }}/{{ item }}">{{ item }}</a></li>
             {% endif %}
         {% endfor %}
       </ul>

@@ -18,16 +18,12 @@ print 'end to load cluster information'
 @app.route("/")
 def default():
     shopid = '14170562'
-    r_dict1 = pare_review_info(shopid, 20)
-    r_dict2 = pare_review_info(shopid, 21)
-    r_dict1['review'] += r_dict2['review'] 
+    r_dict1 = pare_review_info(shopid, '10')
     return render_template('review.html', val=r_dict1)
 
-@app.route('/<shopid>')
-def view_by_shop(shopid):
-    r_dict1 = pare_review_info(shopid, 20)
-    r_dict2 = pare_review_info(shopid, 21)
-    r_dict1['review'] += r_dict2['review'] 
+@app.route('/<shopid>/<pageno>')
+def view_by_shop(shopid, pageno):
+    r_dict1 = pare_review_info(shopid, pageno)
     return render_template('review.html', val=r_dict1)
 
 
@@ -53,6 +49,8 @@ def pare_review_info(shopid, pageno):
         soup = BeautifulSoup(f.read())
         r_dict['review'] = review_list
         r_dict['pno_list'] = list()
+        r_dict['shopid'] = shopid
+        r_dict['curr_page'] = pageno
         for a in soup.find_all('div', class_='revitew-title') :
             r_dict['shopname'] = soup.h1.a.string
         for comment_list_div in soup.find_all('div', class_='comment-list'):
