@@ -32,35 +32,41 @@
             </thead>
             <tbody>
               {% for item in val.review %}
-              {% if item[3] != 'NULL' %}
               <tr>
                 <td>{{ item[0] }}</td>
                 <td>{{ item[1] }}</td>
                 <td>{{ item[2] }}</td>
-                <td>{{ item[3] }}</td>
-                <td>{{ item[4] }}</td>
                 <td>
-                    {% if item[5] != 'NULL' %}
-                    <h4><span class="label label-primary">{{ item[5] }}</span></h4>
-                    {% endif %}
+                    {% for x in item[3] %}
+                    <h4><span class="label label-primary">{{ x[0] }}</span></h4>
+                    {% endfor %}
                 </td>
                 <td>
-                    {% if item[6] != 'NULL' %}
-                    <h4><span class="label label-primary">{{ item[6] }}</span></h4>
-                    {% endif %}
+                    {% for x in item[3] %}
+                    <h4><span class="label label-primary">{{ x[1] }}</span></h4>
+                    {% endfor %}
                 </td>
                 <td>
-                    {% if item[7] != 'NULL' %}
-                    <h4><span class="label label-primary">{{ item[7] }}</span></h4>
-                    {% endif %}
+                    {% for x in item[3] %}
+                    <h4><span class="label label-primary">{{ x[2] }}</span></h4>
+                    {% endfor %}
                 </td>
                 <td>
-                    {% if item[8] != 'NULL' %}
-                    <h4><span class="label label-primary">{{ item[8] }}</span></h4>
-                    {% endif %}
+                    {% for x in item[3] %}
+                    <h4><span class="label label-primary">{{ x[3] }}</span></h4>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for x in item[3] %}
+                    <h4><span class="label label-primary">{{ x[4] }}</span></h4>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for x in item[3] %}
+                    <h4><span class="label label-primary">{{ x[5] }}</span></h4>
+                    {% endfor %}
                 </td>
               </tr>
-              {% endif %}
               {% endfor %}
             </tbody>
             </table>

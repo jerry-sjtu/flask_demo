@@ -67,10 +67,9 @@ def pare_review_info(shopid, pageno):
                 time = li.find('span', class_='time').string
                 #cluster information:noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment
                 if review_id in cluster_dict:
-                    noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment = cluster_dict[review_id]
-                    review_list.append((review_id, time, review_content, noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment))
-                else:
-                    review_list.append((review_id, time, review_content, 'NULL', 'NULL', 'NULL', 'NULL', 'NULL', 'NULL'))
+                    #noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment = cluster_dict[review_id]
+                    tag_list = cluster_dict[review_id]
+                    review_list.append((review_id, time, review_content, tag_list))
         for a in soup.find_all('a', class_="PageLink"):
             r_dict['pno_list'].append(a.attrs['data-pg'])
     return r_dict

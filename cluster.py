@@ -14,7 +14,9 @@ def init_cluster(path):
             continue
         if int(review_id) <= min_id:
             continue
-        cluster_df[review_id] = (noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment)
+        if review_id not in cluster_df:
+            cluster_df[review_id] = list()
+        cluster_df[review_id].append((noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment))
     fh.close()
     return cluster_df
 
