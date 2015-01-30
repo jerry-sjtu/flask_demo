@@ -69,10 +69,16 @@ def pare_review_info(shopid, pageno):
                 if review_id in cluster_dict:
                     #noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment = cluster_dict[review_id]
                     tag_list = cluster_dict[review_id]
+                    review_content = highlight_review(review_content, tag_list)
                     review_list.append((review_id, time, review_content, tag_list))
         for a in soup.find_all('a', class_="PageLink"):
             r_dict['pno_list'].append(a.attrs['data-pg'])
     return r_dict
+
+def highlight_review(review_content, tag_list):
+    for tag in tag_list:
+        review_content = review_content.replace(tag[0], '<font color="red">%s</font>' % (tag[0]))
+    return review_content
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -3,7 +3,7 @@ import sys, codecs
 
 def init_cluster(path):
     #review id of 2014-06-01
-    min_id = 56913632
+    min_id = 75775056
     cluster_df = dict()
     fh = codecs.open(path, 'r', 'utf-8')
     for line in fh:

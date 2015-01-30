@@ -35,7 +35,7 @@
               <tr>
                 <td>{{ item[0] }}</td>
                 <td>{{ item[1] }}</td>
-                <td>{{ item[2] }}</td>
+                <td>{{ item[2]|safe }}</td>
                 <td>
                     {% for x in item[3] %}
                     <h4><span class="label label-primary">{{ x[0] }}</span></h4>
