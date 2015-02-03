@@ -30,3 +30,20 @@ def init_scene(path):
         cluster_df[word] = scene
     fh.close()
     return cluster_df
+
+
+def init_shop_summary(path):
+    summary_dict = dict()
+    fh = codecs.open(path, 'r', 'utf-8')
+    for line in fh:
+        if len(line.split('\t')) != 2:
+            continue
+        shop_id, summary = line.strip().split('\t')
+        arr = summary[1:-1].split(',')
+        summary_dict[shop_id] = [x[1:-1] for x in arr]
+    fh.close()
+    return summary_dict
+
+
+
+

@@ -11,6 +11,10 @@ import cluster
 app = Flask(__name__)
 BASE_URL = 'http://www.dianping.com/shop/%s/review_all'
 CLUSTER_PATH = 'data/review_summary_sh.csv'
+SHOP_SUMMARY_PATH = 'data/shop_summary.csv'
+print 'start to load summary information'
+shop_dict = cluster.init_shop_summary(SHOP_SUMMARY_PATH)
+print 'end to load summary information'
 print 'start to load cluster information'
 cluster_dict = cluster.init_cluster(CLUSTER_PATH)
 print 'end to load cluster information'
@@ -24,6 +28,8 @@ def default():
 @app.route('/<shopid>/<pageno>')
 def view_by_shop(shopid, pageno):
     r_dict1 = pare_review_info(shopid, pageno)
+    if shopid in shop_dict:
+        r_dict1['shop_summary'] = shop_dict[shopid]
     return render_template('review.html', val=r_dict1)
 
 
@@ -81,4 +87,4 @@ def highlight_review(review_content, tag_list):
     return review_content
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
