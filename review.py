@@ -13,7 +13,7 @@ BASE_URL = 'http://www.dianping.com/shop/%s/review_all'
 CLUSTER_PATH = 'data/review_summary_sh.csv'
 SHOP_SUMMARY_PATH = 'data/shop_summary.csv'
 print 'start to load summary information'
-shop_dict = cluster.init_shop_summary(SHOP_SUMMARY_PATH)
+content_dict, scene_dict = cluster.init_shop_summary(SHOP_SUMMARY_PATH)
 print 'end to load summary information'
 print 'start to load cluster information'
 cluster_dict = cluster.init_cluster(CLUSTER_PATH)
@@ -23,13 +23,19 @@ print 'end to load cluster information'
 def default():
     shopid = '14170562'
     r_dict1 = pare_review_info(shopid, '10')
+    if shopid in content_dict:
+        r_dict1['content_summary'] = content_dict[shopid]
+    if shopid in scene_dict:
+        r_dict1['scene_summary'] = scene_dict[shopid]
     return render_template('review.html', val=r_dict1)
 
 @app.route('/<shopid>/<pageno>')
 def view_by_shop(shopid, pageno):
     r_dict1 = pare_review_info(shopid, pageno)
-    if shopid in shop_dict:
-        r_dict1['shop_summary'] = shop_dict[shopid]
+    if shopid in content_dict:
+        r_dict1['content_summary'] = content_dict[shopid]
+    if shopid in scene_dict:
+        r_dict1['scene_summary'] = scene_dict[shopid]
     return render_template('review.html', val=r_dict1)
 
 

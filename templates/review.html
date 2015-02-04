@@ -13,11 +13,16 @@
 <div class="container">
     <div class="jumbotron col-md-10">
         <p>{{ val.shopname }}的点评</p>
-        <p>
-        {% for x in val.shop_summary %}
+        <p> <p>内容标签</p>
+        {% for x in val.content_summary %}
         <font size="3"><span class="label label-info">{{ x }}</span></font>
         {% endfor %}
-    </p>
+        </p>
+        <p> <p>场景标签</p>
+        {% for x in val.scene_summary %}
+        <font size="3"><span class="label label-info">{{ x }}</span></font>
+        {% endfor %}            
+        </p>
     </div>
     <div class="row">
         <div class="col-md-10">

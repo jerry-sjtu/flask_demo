@@ -33,17 +33,20 @@ def init_scene(path):
 
 
 def init_shop_summary(path):
-    summary_dict = dict()
+    content_dict = dict()
+    scene_dict = dict()
     fh = codecs.open(path, 'r', 'utf-8')
     for line in fh:
-        if len(line.split('\t')) != 2:
+        if len(line.split('\t')) != 3:
             continue
-        shop_id, summary = line.strip().split('\t')
-        arr = summary[1:-1].split(',')
-        summary_dict[shop_id] = [x[1:-1] for x in arr]
+        shop_id, content_tag, scene_tag  = line.strip().split('\t')
+        content_arr = content_tag[1:-1].split(',')
+        content_dict[shop_id] = [x[1:-1] for x in content_arr]
+        if scene_tag == 'NULL':
+            continue
+        scene_arr = scene_tag[1:-1].split(',')
+        scene_dict[shop_id] = [x[1:-1] for x in scene_arr]
     fh.close()
-    return summary_dict
-
-
+    return content_dict, scene_dict
 
 
