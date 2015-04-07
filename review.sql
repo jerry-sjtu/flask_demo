@@ -17,5 +17,5 @@ from dpstg_wcw_shop_review_summary
 hive -e"
 use search;
 select shop_id, content_tag, scene_tag
-from dpstg_wcw_shop_review_summary_tag 
+from dpstg_wcw_shop_review_summary_tag
 ">summary.csv

@@ -13,15 +13,10 @@
 <div class="container">
     <div class="jumbotron col-md-10">
         <p>{{ val.shopname }}的点评</p>
-        <p> <p>内容标签</p>
-        {% for x in val.content_summary %}
-        <font size="3"><span class="label label-info">{{ x }}</span></font>
+        <p> <p>点评标签</p>
+        {% for x in abstract.records %}
+        <font size="3"><span class="label label-info">{{ x.tag }} ({{x.hit}})</span></font>
         {% endfor %}
-        </p>
-        <p> <p>场景标签</p>
-        {% for x in val.scene_summary %}
-        <font size="3"><span class="label label-info">{{ x }}</span></font>
-        {% endfor %}            
         </p>
     </div>
     <div class="row">
@@ -32,12 +27,7 @@
                 <th>ReviewId</th>
                 <th>ReviewTime</th>
                 <th>Review</th>
-                <th>Noun</th>
-                <th>Adj</th>
-                <th>NounTag1</th>
-                <th>NounTag2</th>
-                <th>AdjTag</th>
-                <th>Sentiment</th>
+                <th width="200">Tag</th>
               </tr>
             </thead>
             <tbody>
@@ -48,32 +38,7 @@
                 <td>{{ item[2]|safe }}</td>
                 <td>
                     {% for x in item[3] %}
-                    <h4><span class="label label-primary">{{ x[0] }}</span></h4>
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for x in item[3] %}
-                    <h4><span class="label label-primary">{{ x[1] }}</span></h4>
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for x in item[3] %}
-                    <h4><span class="label label-primary">{{ x[2] }}</span></h4>
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for x in item[3] %}
-                    <h4><span class="label label-primary">{{ x[3] }}</span></h4>
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for x in item[3] %}
-                    <h4><span class="label label-primary">{{ x[4] }}</span></h4>
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for x in item[3] %}
-                    <h4><span class="label label-primary">{{ x[5] }}</span></h4>
+                    <span class="label label-primary" float="right">{{ x }}</span>
                     {% endfor %}
                 </td>
               </tr>

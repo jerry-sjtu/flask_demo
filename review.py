@@ -7,36 +7,51 @@ import gzip
 import cookielib
 from flask import render_template
 import cluster
+import json
 
 app = Flask(__name__)
 BASE_URL = 'http://www.dianping.com/shop/%s/review_all'
-CLUSTER_PATH = 'data/review_summary_sh.csv'
-SHOP_SUMMARY_PATH = 'data/shop_summary.csv'
-print 'start to load summary information'
-content_dict, scene_dict = cluster.init_shop_summary(SHOP_SUMMARY_PATH)
-print 'end to load summary information'
-print 'start to load cluster information'
-cluster_dict = cluster.init_cluster(CLUSTER_PATH)
-print 'end to load cluster information'
+BIZER_HOST = "192.168.220.235"
+BIZER_ABSTRACT_URL = "http://%s:4153/search/shopreview?query=term(shopid,%s)&sort=desc(abstract)&stat=count(reviewtagsentiment)&limit=0,0"
+BIZER_REVIEW_URL = "http://%s:4153/search/shopreview?query=term(reviewid,%s)&sort=desc(addtime)&fl=reviewid,reviewmatch,reviewtagsentiment"
+
 
 @app.route("/")
 def default():
     shopid = '14170562'
-    r_dict1 = pare_review_info(shopid, '10')
-    if shopid in content_dict:
-        r_dict1['content_summary'] = content_dict[shopid]
-    if shopid in scene_dict:
-        r_dict1['scene_summary'] = scene_dict[shopid]
-    return render_template('review.html', val=r_dict1)
+    abstract = request_abstract(shopid)
+    page_dict = pare_review_info(shopid, 1)
+    return render_template('review.html', val=page_dict, abstract=abstract, shopname=page_dict['shopname'])
+
+@app.route('/<shopid>')
+def view_by_shop(shopid):
+    abstract = request_abstract(shopid)
+    page_dict = pare_review_info(shopid, 1)
+    return render_template('review.html', val=page_dict, abstract=abstract, shopname=page_dict['shopname'])
 
 @app.route('/<shopid>/<pageno>')
-def view_by_shop(shopid, pageno):
-    r_dict1 = pare_review_info(shopid, pageno)
-    if shopid in content_dict:
-        r_dict1['content_summary'] = content_dict[shopid]
-    if shopid in scene_dict:
-        r_dict1['scene_summary'] = scene_dict[shopid]
-    return render_template('review.html', val=r_dict1)
+def view_by_shop_page(shopid, pageno):
+    abstract = request_abstract(shopid)
+    page_dict = pare_review_info(shopid, pageno)
+    return render_template('review.html', val=page_dict, abstract=abstract, shopname=page_dict['shopname'])
+
+
+def request_abstract(shopid):
+    url = BIZER_ABSTRACT_URL % (BIZER_HOST, shopid)
+    i_headers = dict()
+    request = urllib2.Request(url, headers=i_headers)
+    response = urllib2.urlopen(request)
+    decodejson = json.loads(response.read())
+    return decodejson
+
+def request_review(reviewid):
+    reviewid = 101161774
+    url = BIZER_REVIEW_URL % (BIZER_HOST, reviewid)
+    i_headers = dict()
+    request = urllib2.Request(url, headers=i_headers)
+    response = urllib2.urlopen(request)
+    decodejson = json.loads(response.read())
+    return decodejson
 
 
 def pare_review_info(shopid, pageno):
@@ -75,22 +90,26 @@ def pare_review_info(shopid, pageno):
                 review_content = biref_div.string
                 if review_content == None:
                     review_content = u'%s' % (biref_div)
-                    review_content = review_content.replace('<div class="J_brief-cont">','').replace('<br/>', '').replace('</div>', '')
+                    review_content = remove_html(review_content)
                 time = li.find('span', class_='time').string
-                #cluster information:noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment
-                if review_id in cluster_dict:
-                    #noun, adj, noun_cat1, noun_cat2, adj_cat, sentiment = cluster_dict[review_id]
-                    tag_list = cluster_dict[review_id]
-                    review_content = highlight_review(review_content, tag_list)
+                review_abs = request_review(review_id)
+                if len(review_abs['records']) > 0:
+                    match_list = review_abs['records'][0]['reviewmatch'].split()
+                    tag_list = review_abs['records'][0]['reviewtagsentiment'].split()
+                    review_content = highlight(review_content, match_list)
                     review_list.append((review_id, time, review_content, tag_list))
         for a in soup.find_all('a', class_="PageLink"):
             r_dict['pno_list'].append(a.attrs['data-pg'])
     return r_dict
 
-def highlight_review(review_content, tag_list):
-    for tag in tag_list:
-        review_content = review_content.replace(tag[0], '<font color="red">%s</font>' % (tag[0]))
+
+def remove_html(original_text):
+    return original_text.replace('<div class="J_brief-cont">','').replace('<br/>', '').replace('</div>', '')
+
+def highlight(review_content, match_list):
+    for m in match_list:
+        review_content = review_content.replace(m, '<font color="red">%s</font>' % (m))
     return review_content
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
