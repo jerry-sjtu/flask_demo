@@ -13,27 +13,25 @@ app = Flask(__name__)
 BASE_URL = 'http://www.dianping.com/shop/%s/review_all'
 BIZER_HOST = "192.168.220.235"
 BIZER_ABSTRACT_URL = "http://%s:4153/search/shopreview?query=term(shopid,%s)&sort=desc(abstract)&stat=count(reviewtagsentiment)&limit=0,0"
-BIZER_REVIEW_URL = "http://%s:4153/search/shopreview?query=term(reviewid,%s)&sort=desc(addtime)&fl=reviewid,reviewmatch,reviewtagsentiment"
+BIZER_REVIEW_URL = "http://%s:4153/search/shopreview?query=term(shopid,%s)&sort=desc(addtime)&fl=*&limit=%s,%s"
+BIZER_TAGRANK_URL = "http://%s:4153/search/shopreview?query=term(shopid,%s),term(reviewtagsentiment,%s)&sort=desc(addtime)&fl=*&limit=%s,%s"
 
+PAGE_SIZE = 20
 
 @app.route("/")
 def default():
-    shopid = '14170562'
-    abstract = request_abstract(shopid)
-    page_dict = pare_review_info(shopid, 1)
-    return render_template('review.html', val=page_dict, abstract=abstract, shopname=page_dict['shopname'])
+    return view_by_shop('1945402')
 
 @app.route('/<shopid>')
 def view_by_shop(shopid):
-    abstract = request_abstract(shopid)
-    page_dict = pare_review_info(shopid, 1)
-    return render_template('review.html', val=page_dict, abstract=abstract, shopname=page_dict['shopname'])
+    return view_by_shop_page(shopid, 1)
 
 @app.route('/<shopid>/<pageno>')
 def view_by_shop_page(shopid, pageno):
     abstract = request_abstract(shopid)
-    page_dict = pare_review_info(shopid, pageno)
-    return render_template('review.html', val=page_dict, abstract=abstract, shopname=page_dict['shopname'])
+    page_dict = review_list_page(shopid, pageno)
+    return render_template('review.html', val=page_dict, abstract=abstract, 
+        shopname=page_dict['shopname'])
 
 
 def request_abstract(shopid):
@@ -44,9 +42,16 @@ def request_abstract(shopid):
     decodejson = json.loads(response.read())
     return decodejson
 
-def request_review(reviewid):
-    reviewid = 101161774
-    url = BIZER_REVIEW_URL % (BIZER_HOST, reviewid)
+def request_review(shopid, start, pagesize):
+    url = BIZER_REVIEW_URL % (BIZER_HOST, shopid, start, pagesize)
+    i_headers = dict()
+    request = urllib2.Request(url, headers=i_headers)
+    response = urllib2.urlopen(request)
+    decodejson = json.loads(response.read())
+    return decodejson
+
+def request_tgrank(shopid, tag, start, pagesize):
+    url = BIZER_TAGRANK_URL % (BIZER_HOST, shopid, tag, start, pagesize)
     i_headers = dict()
     request = urllib2.Request(url, headers=i_headers)
     response = urllib2.urlopen(request)
@@ -54,57 +59,30 @@ def request_review(reviewid):
     return decodejson
 
 
-def pare_review_info(shopid, pageno):
-    url = BASE_URL % shopid
-    if pageno > 1:
-        url += '?pageno=%s' % (pageno)
-    i_headers = dict()
-    i_headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36'
-    i_headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
-    i_headers['Accept-Encoding'] = 'gzip,deflate,sdch'
-    i_headers['Accept-Language'] = 'zh-CN,zh;q=0.8'
-    i_headers['Cache-Control'] = 'max-age=0'
-    i_headers['Connection'] = 'keep-alive'
-    i_headers['Host'] = 'www.dianping.com'
-    request = urllib2.Request(url, headers=i_headers)
-    response = urllib2.urlopen(request)
+def review_list_page(shopid, pageno):
+    start = (int(pageno) - 1) * PAGE_SIZE
+    review_json = request_review(shopid, start, PAGE_SIZE)
     r_dict = dict()
-    review_list = list()
-    if response.info().get('Content-Encoding') == 'gzip':
-        buf = StringIO.StringIO(response.read())
-        f = gzip.GzipFile(fileobj=buf)
-        soup = BeautifulSoup(f.read())
-        r_dict['review'] = review_list
-        r_dict['pno_list'] = list()
-        r_dict['shopid'] = shopid
-        r_dict['curr_page'] = pageno
-        for a in soup.find_all('div', class_='revitew-title') :
-            r_dict['shopname'] = soup.h1.a.string
-        for comment_list_div in soup.find_all('div', class_='comment-list'):
-            ul = comment_list_div.ul
-            for li in ul.find_all('li'):
-                if 'data-id' not in li.attrs:
-                    continue
-                review_id = li.attrs["data-id"]
-                biref_div = li.find('div', class_='J_brief-cont')
-                review_content = biref_div.string
-                if review_content == None:
-                    review_content = u'%s' % (biref_div)
-                    review_content = remove_html(review_content)
-                time = li.find('span', class_='time').string
-                review_abs = request_review(review_id)
-                if len(review_abs['records']) > 0:
-                    match_list = review_abs['records'][0]['reviewmatch'].split()
-                    tag_list = review_abs['records'][0]['reviewtagsentiment'].split()
-                    review_content = highlight(review_content, match_list)
-                    review_list.append((review_id, time, review_content, tag_list))
-        for a in soup.find_all('a', class_="PageLink"):
-            r_dict['pno_list'].append(a.attrs['data-pg'])
+    r_dict['review'] = list()
+    r_dict['shopid'] = shopid
+    r_dict['curr_page'] = pageno
+    if len(review_json['records']) == 0:
+        return r_dict
+    for r in review_json['records']:    
+        r_dict['shopname'] = r['shopname']
+        time = r['addtime']
+        review_id = r['reviewid']
+        match_list = r['reviewmatch'].split()
+        tag_list = r['reviewtagsentiment'].split()
+        review_body = r['reviewbody']
+        review_body = highlight(review_body, match_list)
+        r_dict['review'].append((review_id, time, review_body, tag_list))
+    total_hit = int(review_json['totalhits'])
+    r_dict['pno_list'] = range(1, total_hit / PAGE_SIZE + 1)
     return r_dict
 
-
-def remove_html(original_text):
-    return original_text.replace('<div class="J_brief-cont">','').replace('<br/>', '').replace('</div>', '')
+def review_search_page(shopid, tag, pageno):
+    pass
 
 def highlight(review_content, match_list):
     for m in match_list:
@@ -113,3 +91,4 @@ def highlight(review_content, match_list):
 
 if __name__ == "__main__":
     app.run(debug=True)
+    #http://10.1.107.103/
