@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 from flask import Flask
-from bs4 import BeautifulSoup
 import urllib2
-import StringIO
-import gzip
-import cookielib
 from flask import render_template
-import cluster
 import json
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 app = Flask(__name__)
 BASE_URL = 'http://www.dianping.com/shop/%s/review_all'
@@ -31,8 +29,19 @@ def view_by_shop_page(shopid, pageno):
     abstract = request_abstract(shopid)
     page_dict = review_list_page(shopid, pageno)
     return render_template('review.html', val=page_dict, abstract=abstract, 
-        shopname=page_dict['shopname'])
+        shopname=page_dict['shopname'], shopid=page_dict['shopid'], tag='')
 
+
+@app.route('/<shopid>/tag/<tag>')
+def view_by_shop_tag(shopid, tag):
+    return view_by_shop_tag_page(shopid, tag, 1)
+
+@app.route('/<shopid>/<pageno>/tag/<tag>')
+def view_by_shop_tag_page(shopid, tag, pageno):
+    abstract = request_abstract(shopid)
+    page_dict = review_search_page(shopid, tag, pageno)
+    return render_template('review.html', val=page_dict, abstract=abstract, 
+        shopname=page_dict['shopname'], shopid=page_dict['shopid'], tag=tag)
 
 def request_abstract(shopid):
     url = BIZER_ABSTRACT_URL % (BIZER_HOST, shopid)
@@ -78,11 +87,31 @@ def review_list_page(shopid, pageno):
         review_body = highlight(review_body, match_list)
         r_dict['review'].append((review_id, time, review_body, tag_list))
     total_hit = int(review_json['totalhits'])
-    r_dict['pno_list'] = range(1, total_hit / PAGE_SIZE + 1)
+    r_dict['pno_list'] = range(1, total_hit / PAGE_SIZE + 2)
     return r_dict
 
 def review_search_page(shopid, tag, pageno):
-    pass
+    start = (int(pageno) - 1) * PAGE_SIZE
+    review_json = request_tgrank(shopid, tag, start, PAGE_SIZE)
+    r_dict = dict()
+    r_dict['review'] = list()
+    r_dict['shopid'] = shopid
+    r_dict['curr_page'] = pageno
+    if len(review_json['records']) == 0:
+        return r_dict
+    for r in review_json['records']:    
+        r_dict['shopname'] = r['shopname']
+        time = r['addtime']
+        review_id = r['reviewid']
+        match_list = r['reviewmatch'].split()
+        tag_list = r['reviewtagsentiment'].split()
+        review_body = r['reviewbody']
+        review_body = highlight(review_body, match_list)
+        r_dict['review'].append((review_id, time, review_body, tag_list))
+    total_hit = int(review_json['totalhits'])
+    r_dict['pno_list'] = range(1, total_hit / PAGE_SIZE + 2)
+    return r_dict
+
 
 def highlight(review_content, match_list):
     for m in match_list:

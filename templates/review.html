@@ -12,10 +12,10 @@
 <body>
 <div class="container">
     <div class="jumbotron col-md-10">
-        <p>{{ val.shopname }}的点评</p>
+        <p>{{ shopname }}的点评</p>
         <p> <p>点评标签</p>
         {% for x in abstract.records %}
-        <font size="3"><span class="label label-info">{{ x.tag }} ({{x.hit}})</span></font>
+        <a href="/{{shopid}}/tag/{{x.tag}}"><font size="3"><span class="label label-info">{{ x.tag }} ({{x.hit}})</span></font></a>
         {% endfor %}
         </p>
     </div>
@@ -52,11 +52,11 @@
     <div><nav>
       <ul class="pagination">
         {% for item in val.pno_list %}
-            {% if item == '1' %}
-                    <li><a href="/{{ val.shopid }}/{{ item }}"> {{ item }} ... </a></li>
-            {% endif %}
-            {% if item != '1' %}
+            {% if tag == '' %}
                 <li><a href="/{{ val.shopid }}/{{ item }}">{{ item }}</a></li>
+            {% endif %}
+            {% if tag != '' %}
+                <li><a href="/{{ val.shopid }}/{{ item }}/tag/{{tag}}">{{ item }}</a></li>
             {% endif %}
         {% endfor %}
       </ul>
