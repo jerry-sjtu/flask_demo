@@ -49,6 +49,11 @@ def request_abstract(shopid):
     request = urllib2.Request(url, headers=i_headers)
     response = urllib2.urlopen(request)
     decodejson = json.loads(response.read())
+    for x in decodejson['records']:
+        if x['tag'].endswith('-1'):
+            x['sent'] = '-1'
+        else:
+            x['sent'] = '1'
     return decodejson
 
 def request_review(shopid, start, pagesize):
@@ -137,4 +142,4 @@ if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
     #app.run(host='0.0.0.0', port=80, debug=False)
     #demo host: 
-    #bizer host: search-arts-shopreview01.nh
+    #bizer host: search-bizer-shopreview01.nh

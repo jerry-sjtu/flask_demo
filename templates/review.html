@@ -16,7 +16,14 @@
         <p> <p>点评标签</p>
         <a href="/{{shopid}}"><font size="3"><span class="label label-danger">全部</span></font></a>        
         {% for x in abstract.records %}
-        <a href="/{{shopid}}/tag/{{x.tag}}"><font size="3"><span class="label label-info">{{ x.tag }} ({{x.hit}})</span></font></a>
+        <a href="/{{shopid}}/tag/{{x.tag}}">
+            {% if x.sent == '1' %}
+            <font size="3"><span class="label label-info">{{ x.tag }} ({{x.hit}})</span></font>
+            {% endif %}
+            {% if x.sent == '-1' %}
+            <font size="3"><span class="label label-default">{{ x.tag }} ({{x.hit}})</span></font>
+            {% endif %}
+        </a>
         {% endfor %}
         </p>
     </div>
