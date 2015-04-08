@@ -61,6 +61,7 @@ def request_review(shopid, start, pagesize):
 
 def request_tgrank(shopid, tag, start, pagesize):
     url = BIZER_TAGRANK_URL % (BIZER_HOST, shopid, tag, start, pagesize)
+    print url
     i_headers = dict()
     request = urllib2.Request(url, headers=i_headers)
     response = urllib2.urlopen(request)
@@ -103,7 +104,8 @@ def review_search_page(shopid, tag, pageno):
         r_dict['shopname'] = r['shopname']
         time = r['addtime']
         review_id = r['reviewid']
-        match_list = r['reviewmatch'].split()
+        match_list = list()
+        match_list.append(r['highlight'])
         tag_list = r['reviewtagsentiment'].split()
         review_body = r['reviewbody']
         review_body = highlight(review_body, match_list)
