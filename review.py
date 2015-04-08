@@ -12,7 +12,7 @@ BASE_URL = 'http://www.dianping.com/shop/%s/review_all'
 BIZER_HOST = "192.168.220.235"
 BIZER_ABSTRACT_URL = "http://%s:4153/search/shopreview?query=term(shopid,%s)&sort=desc(abstract)&stat=count(reviewtagsentiment)&limit=0,0"
 BIZER_REVIEW_URL = "http://%s:4153/search/shopreview?query=term(shopid,%s)&sort=desc(addtime)&fl=*&limit=%s,%s"
-BIZER_TAGRANK_URL = "http://%s:4153/search/shopreview?query=term(shopid,%s),term(reviewtagsentiment,%s)&sort=desc(addtime)&fl=*&limit=%s,%s"
+BIZER_TAGRANK_URL = "http://%s:4153/search/shopreview?query=term(shopid,%s),term(reviewtagsentiment,%s)&sort=desc(tagrank)&fl=*&limit=%s,%s"
 
 PAGE_SIZE = 20
 
