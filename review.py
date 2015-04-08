@@ -61,7 +61,6 @@ def request_review(shopid, start, pagesize):
 
 def request_tgrank(shopid, tag, start, pagesize):
     url = BIZER_TAGRANK_URL % (BIZER_HOST, shopid, tag, start, pagesize)
-    print url
     i_headers = dict()
     request = urllib2.Request(url, headers=i_headers)
     response = urllib2.urlopen(request)
@@ -88,7 +87,7 @@ def review_list_page(shopid, pageno):
         review_body = highlight(review_body, match_list)
         r_dict['review'].append((review_id, time, review_body, tag_list))
     total_hit = int(review_json['totalhits'])
-    r_dict['pno_list'] = range(1, total_hit / PAGE_SIZE + 2)
+    r_dict['pno_list'] = pageno_list(int(pageno), total_hit)
     return r_dict
 
 def review_search_page(shopid, tag, pageno):
@@ -111,9 +110,23 @@ def review_search_page(shopid, tag, pageno):
         review_body = highlight(review_body, match_list)
         r_dict['review'].append((review_id, time, review_body, tag_list))
     total_hit = int(review_json['totalhits'])
-    r_dict['pno_list'] = range(1, total_hit / PAGE_SIZE + 2)
+    #r_dict['pno_list'] = range(1, total_hit / PAGE_SIZE + 2)
+    r_dict['pno_list'] = pageno_list(int(pageno), total_hit)
     return r_dict
 
+def pageno_list(curr_page, total_hit):
+    max_page = total_hit / PAGE_SIZE + 1
+    no_list = list()
+    no_list.append('1')
+    if curr_page > 2:
+        no_list.append('...')
+    for i in range(curr_page, curr_page + 20):
+        if i < max_page and i > 1:
+            no_list.append(str(i))
+    if curr_page + 20 < max_page:
+        no_list.append('...')
+    no_list.append(str(max_page))
+    return no_list
 
 def highlight(review_content, match_list):
     for m in match_list:
@@ -121,5 +134,7 @@ def highlight(review_content, match_list):
     return review_content
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    #http://10.1.107.103/
+    app.run(host='0.0.0.0', debug=True)
+    #app.run(host='0.0.0.0', port=80, debug=False)
+    #demo host: 
+    #bizer host: search-arts-shopreview01.nh

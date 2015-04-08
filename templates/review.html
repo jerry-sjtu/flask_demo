@@ -14,6 +14,7 @@
     <div class="jumbotron col-md-10">
         <p>{{ shopname }}的点评</p>
         <p> <p>点评标签</p>
+        <a href="/{{shopid}}"><font size="3"><span class="label label-danger">全部</span></font></a>        
         {% for x in abstract.records %}
         <a href="/{{shopid}}/tag/{{x.tag}}"><font size="3"><span class="label label-info">{{ x.tag }} ({{x.hit}})</span></font></a>
         {% endfor %}
