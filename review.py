@@ -85,12 +85,15 @@ def review_list_page(shopid, pageno):
     for r in review_json['records']:    
         r_dict['shopname'] = r['shopname']
         time = r['addtime']
+        score1 = r['score1']
+        score2 = r['score2']
+        score3 = r['score3']
         review_id = r['reviewid']
         match_list = r['reviewmatch'].split()
         tag_list = r['reviewtagsentiment'].split()
         review_body = r['reviewbody']
         review_body = highlight(review_body, match_list)
-        r_dict['review'].append((review_id, time, review_body, tag_list))
+        r_dict['review'].append((review_id, time, review_body, tag_list, score1, score2, score3))
     total_hit = int(review_json['totalhits'])
     r_dict['pno_list'] = pageno_list(int(pageno), total_hit)
     return r_dict
