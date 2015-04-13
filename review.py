@@ -110,13 +110,16 @@ def review_search_page(shopid, tag, pageno):
     for r in review_json['records']:    
         r_dict['shopname'] = r['shopname']
         time = r['addtime']
+        score1 = r['score1']
+        score2 = r['score2']
+        score3 = r['score3']
         review_id = r['reviewid']
         match_list = list()
         match_list.append(r['highlight'])
         tag_list = r['reviewtagsentiment'].split()
         review_body = r['reviewbody']
         review_body = highlight(review_body, match_list)
-        r_dict['review'].append((review_id, time, review_body, tag_list))
+        r_dict['review'].append((review_id, time, review_body, tag_list, score1, score2, score3))
     total_hit = int(review_json['totalhits'])
     #r_dict['pno_list'] = range(1, total_hit / PAGE_SIZE + 2)
     r_dict['pno_list'] = pageno_list(int(pageno), total_hit)
@@ -144,5 +147,5 @@ def highlight(review_content, match_list):
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
     #app.run(host='0.0.0.0', port=80, debug=False)
-    #demo host: 
+    #demo host: 10.1.107.103/
     #bizer host: search-bizer-shopreview01.nh
